@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
 
+import './App.css';
+import Routes from './Routes'
+import { BrowserRouter as Router } from "react-router-dom";
+import Navbar from './Componentes/Navbar';
+import { useEffect } from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { firebaseApp } from './firebase'
+import { actionTypes } from './estadoGlobal/DefinicionFunciones';
+import { UsarContext } from './estadoGlobal/UsarContexto'
 function App() {
+
+
+  const [{ user }, dispatch] = UsarContext()
+  
+  
+  const auth = getAuth()
+  
+  useEffect(() => {
+    onAuthStateChanged(auth ,(authUser) => {
+      if(authUser){
+        dispatch({
+          type:actionTypes.USER_FIREBASE,
+          user:authUser,
+        })
+      }
+
+    })
+
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes />
+    </Router>
   );
 }
-
 export default App;
